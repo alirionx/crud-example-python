@@ -1,0 +1,25 @@
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  name: build-docker-img-git
+serviceAccountName: build-docker-img-git
+spec:
+  pipelineRef:
+    name: build-docker-img-git
+  workspaces:
+  - name: shared-data
+    volumeClaimTemplate:
+      spec:
+        accessModes:
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: 1Gi
+  - name: docker-credentials
+    secret:
+      secretName: creds-ghcr
+  params:
+  - name: repo-url
+    value: https://github.com/<YOUR REPO>.git
+  - name: image-reference
+    value: ghcr.io/<YOUR REPO>/<YOUR IMG NAME>:latest

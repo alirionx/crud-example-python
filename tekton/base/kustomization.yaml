@@ -1,0 +1,6 @@
+resources:
+- serviceaccount.yaml
+- github-secret.yaml
+- ghcr-secret.yaml
+- pipeline.yaml
+- pipelinerun.yaml
