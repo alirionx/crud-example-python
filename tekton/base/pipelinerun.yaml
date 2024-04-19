@@ -2,8 +2,8 @@ apiVersion: tekton.dev/v1beta1
 kind: PipelineRun
 metadata:
   name: build-docker-img-git
-serviceAccountName: build-docker-img-git
 spec:
+  serviceAccountName: build-docker-img-git
   pipelineRef:
     name: build-docker-img-git
   workspaces:
