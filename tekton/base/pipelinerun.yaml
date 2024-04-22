@@ -1,11 +1,17 @@
-apiVersion: tekton.dev/v1beta1
+apiVersion: tekton.dev/v1
 kind: PipelineRun
 metadata:
-  name: build-docker-img-git
+  name: buildpack-from-git
 spec:
-  serviceAccountName: build-docker-img-git
   pipelineRef:
-    name: build-docker-img-git
+    name: buildpack-from-git
+  taskRunTemplate:
+    serviceAccountName: buildpack-from-git
+    podTemplate:
+      securityContext:
+        fsGroup: 0 ### => !!! Required for Rancher Longhorn !!! 
+        runAsUser: 0
+        # runAsNonRoot: true  ### => and this must be diabled, if fsGroup is set
   workspaces:
   - name: shared-data
     volumeClaimTemplate:
@@ -17,7 +23,7 @@ spec:
             storage: 1Gi
   - name: docker-credentials
     secret:
-      secretName: creds-ghcr
+      secretName: creds-ghcr-kaniko
   params:
   - name: repo-url
     value: https://github.com/<YOUR REPO>.git

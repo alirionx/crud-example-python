@@ -1,13 +1,16 @@
-apiVersion: tekton.dev/v1beta1
+apiVersion: tekton.dev/v1
 kind: Pipeline
 metadata:
-  name: build-docker-img-git
+  name: buildpack-from-git
 spec:
   params:
   - name: repo-url
     type: string
   - name: image-reference
     type: string
+  - name: dockerfile-name
+    type: string
+    default: Dockerfile
 
   workspaces:
   - name: shared-data
@@ -24,15 +27,34 @@ spec:
     - name: url
       value: $(params.repo-url)
 
-  - name: build-push
-    runAfter: ["fetch-source"]
+  # - name: build-push
+  #   runAfter: 
+  #   - fetch-source
+  #   taskRef:
+  #     name: kaniko
+  #   workspaces:
+  #   - name: source
+  #     workspace: shared-data
+  #   - name: dockerconfig
+  #     workspace: docker-credentials
+  #   params:
+  #   - name: DOCKERFILE
+  #     value: $(params.dockerfile-name)
+  #   - name: IMAGE
+  #     value: $(params.image-reference)
+
+  - name: buildpacks 
     taskRef:
-      name: kaniko
+      name: buildpacks
+    runAfter:
+      - fetch-source
     workspaces:
-    - name: source
-      workspace: shared-data
-    - name: dockerconfig
-      workspace: docker-credentials
+      - name: source
+        workspace: shared-data
     params:
-    - name: IMAGE
-      value: $(params.image-reference)
+      - name: APP_IMAGE
+        value: $(params.image-reference)
+      - name: SOURCE_SUBPATH
+        value: src      
+      - name: BUILDER_IMAGE
+        value: paketobuildpacks/builder:base 
