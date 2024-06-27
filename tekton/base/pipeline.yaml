@@ -8,9 +8,9 @@ spec:
     type: string
   - name: image-reference
     type: string
-  - name: dockerfile-name
-    type: string
-    default: Dockerfile
+  # - name: dockerfile-name
+  #   type: string
+  #   default: Dockerfile
 
   workspaces:
   - name: shared-data
